@@ -1,10 +1,17 @@
-import "./styles.css";
-
 export default function App() {
   return (
-    <div className="App">
-      <h1>Travelling website</h1>
-      <h2>Start editing to see some magic happen!</h2>
+    <div>
+      <Logo />
+      <Form />
+      <PackingList />
+      <Stats />
     </div>
   );
 }
+
+function Logo() {
+  return <h1>🌴🌴 Far Away Home 💼</h1>;
+}
+function Form() {}
+function PackingList() {}
+function Stats() {}
