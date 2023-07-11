@@ -9,11 +9,24 @@ const initialItems = [
 ];
 
 export default function App() {
+  const [items,setItems] = useState([])
+
+  function handleAddItems(item){
+    setItems((items) => [...items,item])
+  }
+
+  function handleDelete(id){
+    setItems((items) => items.filter((item) => item.id !== id))
+  }
+
+  function handleChecked(id){
+    setItems((items) => items.map((item) => item.id === id ? {...item,packed : !item.packed} : item))
+  }
   return (
     <div>
       <Logo />
-      <Form />
-      <PackingList />
+      <Form onAddItems={handleAddItems}/>
+      <PackingList items={items} onDeleteItem={handleDelete} onCheckedItem={handleChecked} />
       <Stats />
     </div>
   );
@@ -23,16 +36,16 @@ function Logo() {
   return <h1>🌴🌴 Far Away Home 💼</h1>;
 }
 
-function Form() {
+function Form({onAddItems}) {
   const [description, setDescription] = useState("")
   const [count,setCount] = useState(1)
+
   function handleSubmit(e){
     e.preventDefault()
 
     if(e.target[1].value != ""){
       const newItem = {description,quantity:count,id:Date.now(),packed:false}
-      initialItems.push(newItem)
-      console.log(initialItems)
+      onAddItems(newItem)
     }
 
     setDescription("")
@@ -50,31 +63,26 @@ function Form() {
   )
 }
 
-function PackingList() {
+function PackingList({items,onDeleteItem,onCheckedItem}) {
+
   return(
     <div className="list">
       <ul>
-        {initialItems.map(item => <Item {...item} key={item.id}/>)}
+        {items.map(item => <Item item = {item} onDeleteItem={onDeleteItem} onCheckedItem={onCheckedItem} key={item.id}/>)}
       </ul>
     </div>
   )
 }
 
-function Item({id,description,quantity,packed}){
-  const [isPacked,setPacked] = useState(packed);
-
-  function handlePacking (){
-    initialItems[id-1].packed = !isPacked;
-    setPacked((key) => !key);
-    console.log(initialItems)
-  }
+function Item({item,onDeleteItem,onCheckedItem}){
 
   return (
     <li>
-      <span style={isPacked ? {textDecoration:"line-through"}:{}}>
-      {quantity} {description}
+      <input type="checkbox" value={item.packed} onClick={()=>onCheckedItem(item.id)} />
+      <span style={item.packed ? {textDecoration:"line-through"}:{}}>
+      {item.quantity} {item.description}
       </span>
-      <button onClick={handlePacking}>❌</button>
+      <button onClick={() => onDeleteItem(item.id)}>❌</button>
     </li>
   )
 }
